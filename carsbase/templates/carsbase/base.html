@@ -1,0 +1,101 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+{#    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">#}
+     <script src="{% static 'carsbase/js/app.js' %}"></script>
+    <link type="text/css" href="{% static 'carsbase/css/styles.css' %}" rel="stylesheet" />
+</head>
+<body>
+    <h1 style="text-align: center; font-weight: bold;">Заказы</h1>
+    <form action="{% url 'filter' %}" method="get">
+        <div class="left-side my-4">
+            <h3 class="sear-head editContent">Марки</h3>
+            <ul class="w3layouts-box-list">
+                {% for brand in brands_list %}
+                    <li class="editContent">
+                        <input type="checkbox" class="checked" name="brand" value="{{ brand }}">
+                        <span class="span editContent">{{ brand }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <button type="submit">Фильтровать</button>
+    </form>
+    <form action="{% url 'base' %}" method="get">
+        <button type="submit">Снять фильтры</button>
+    </form>
+    <h3 style="margin-top: 40px" class="sear-head editContent">Сортировка по количеству</h3>
+    <button type="submit"><a href="javascript:addOrUpdateUrlParam('order', 'asc');" style="color: black">По возрастанию</a></button>
+    <button type="submit"><a href="javascript:addOrUpdateUrlParam('order', 'desc');" style="color: black">По убыванию</a></button>
+{#    <form action="/?order=asc" method="get">#}
+{#        <button type="submit">По возрастанию</button>#}
+{#    </form>#}
+{#    <form action="/?order=desc" method="get">#}
+{#        <button type="submit">По убыванию</button>#}
+{#    </form>#}
+    <p style="margin-top: 40px"></p>
+    {% if orders_list %}
+        <table class="iksweb">
+            <tbody>
+                <tr>
+                    {% for column in columns %}
+                        <td style="text-align: center; font-weight: bold; font-size: 110%;">{{ column }}</td>
+                    {% endfor %}
+                </tr>
+                {% for order in orders_list %}
+                    <tr>
+                        {% for value in order.values %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <style id="css" type="text/css">/* Стили таблицы (IKSWEB) */
+            table.iksweb{text-decoration: none;border-collapse:collapse;width:100%;text-align:left;}
+            table.iksweb th{font-weight:normal;font-size:16px; color:#ffffff;background-color:#348f00;}
+            table.iksweb td{font-size:14px;color:#000000;}
+            table.iksweb td,table.iksweb th{white-space:pre-wrap;padding:12px 20px;line-height:14px;vertical-align: middle;border: 1px solid #348f00;}
+            table.iksweb tr:hover{background-color:#f9fafb}
+            table.iksweb tr:hover td{color:#354251;cursor:default;}
+        </style>
+        {% if queryset.has_other_pages %}
+            <nav class="list-pages">
+                <ul>
+                    {% if queryset.has_previous %}
+                        <li class="page-num">
+                            <a href="javascript:addOrUpdateUrlParam('page', '{{ queryset.previous_page_number }}');">&lt;</a>
+                        </li>
+                    {% endif %}
+                    {% for page_num in queryset.paginator.page_range %}
+                        {% if queryset.number == page_num %}
+                            <li class="page-num page-num-selected">{{ page_num }}</li>
+                        {% elif page_num >= queryset.number|add:-3 and page_num <= queryset.number|add:3 %}
+                            <li class="page-num">
+                                <a href="javascript:addOrUpdateUrlParam('page', '{{ page_num }}');">{{ page_num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if queryset.has_next %}
+                        <li class="page-num">
+                            <a href="javascript:addOrUpdateUrlParam('page', '{{ queryset.next_page_number }}');">&gt;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+{#        <p1>{{ queryset.number }}</p1>#}
+    {% else %}
+        <h3 style="text-align: center;">Заказов нет</h3>
+    {% endif %}
+{#    {% for brand in brands_list %}#}
+{#        <p>{{ brand }}</p>#}
+{#    {% endfor %}#}
+</body>
+</html>
